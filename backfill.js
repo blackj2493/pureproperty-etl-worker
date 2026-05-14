@@ -7,7 +7,7 @@ import 'dotenv/config';
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 // 2. Configuration
-const START_DATE = '2021-01-01T00:00:00Z';
+const START_DATE = 2021-01-01;
 const BATCH_SIZE = 100; // Pulling the FULL payload is heavy. Do not exceed 100 per batch.
 const SLEEP_MS = 1500;  // 1.5 second pause to respect PROPTX rate limits
 
