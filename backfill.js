@@ -45,25 +45,14 @@ async function runBackfill() {
         try {
             console.log(`Fetching records ${skipCount} to ${skipCount + BATCH_SIZE}...`);
             
-            // 3. The API Call (Notice: No $select parameter, we want EVERYTHING)
-            const response = await axios.get(`${process.env.PROPTX_API_URL}/Property`, {
-                headers: { 'Authorization': `Bearer ${process.env.PROPTX_BEARER_TOKEN}` },
-                params: {
-                    '$filter': `MlsStatus eq 'Sold' and CloseDate ge ${START_DATE}`,
-                    '$top': BATCH_SIZE,
-                    '$skip': skipCount,
-                    '$orderby': 'CloseDate asc'
-                }
+         
+// 3. The API Call (Manually building URL to prevent Axios from using '+' for spaces)
+            const queryParams = `?$filter=MlsStatus eq 'Sold' and CloseDate ge ${START_DATE}&$top=${BATCH_SIZE}&$skip=${skipCount}&$orderby=CloseDate asc`;
+            const encodedUrl = `${process.env.PROPTX_API_URL}/Property${queryParams.replace(/ /g, '%20')}`;
+
+            const response = await axios.get(encodedUrl, {
+                headers: { 'Authorization': `Bearer ${process.env.PROPTX_BEARER_TOKEN}` }
             });
-
-            const listings = response.data.value;
-
-            if (listings.length === 0) {
-                console.log("✅ Backfill Complete. All historical data acquired.");
-                hasMoreData = false;
-                break;
-            }
-
             // 4. Data Transformation Pipeline
             const supabasePayload = listings.map(listing => {
                 
