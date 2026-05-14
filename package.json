@@ -1,17 +1,15 @@
 {
   "name": "pureproperty-etl-worker",
   "version": "1.0.0",
-  "main": "index.js",
-"scripts": {
-  "start": "node backfill.js"
-}
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "description": "Historical Data Backfill Worker",
+  "main": "backfill.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backfill.js"
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.105.4",
-    "axios": "^1.16.1",
-    "dotenv": "^17.4.2"
+    "@supabase/supabase-js": "^2.43.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5"
   }
 }
