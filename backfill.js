@@ -36,9 +36,9 @@ async function runBackfill() {
         try {
             console.log(`\n⏳ Fetching records ${skipCount} to ${skipCount + BATCH_SIZE}...`);
             
-            // 3. The API Call (Strict OData Encoding)
-            const baseUrl = process.env.PROPTX_API_URL.replace(/\/$/, ''); // Removes trailing slash if you accidentally added one
-            const rawQuery = `?$filter=MlsStatus eq 'Sold' and CloseDate ge ${START_DATE}&$top=${BATCH_SIZE}&$skip=${skipCount}&$orderby=CloseDate asc`;
+// 3. THE USER'S TEST QUERY: Look strictly between Jan 2021 and May 23, 2024
+            const baseUrl = process.env.PROPTX_API_URL.replace(/\/$/, ''); 
+            const rawQuery = `?$filter=MlsStatus eq 'Sold' and CloseDate ge 2021-01-01 and CloseDate lt 2024-05-24&$top=10&$skip=0&$orderby=CloseDate asc`;
             const encodedUrl = `${baseUrl}/Property${rawQuery.replace(/ /g, '%20')}`;
 
             console.log(`🌐 Hitting URL: ${encodedUrl}`);
@@ -46,16 +46,6 @@ async function runBackfill() {
             const response = await axios.get(encodedUrl, {
                 headers: { 'Authorization': `Bearer ${process.env.PROPTX_BEARER_TOKEN}` }
             });
-
-            const listings = response.data.value;
-
-            if (!listings || listings.length === 0) {
-                console.log("✅ Backfill Complete. No more records found.");
-                hasMoreData = false;
-                break;
-            }
-
-            console.log(`✅ Successfully downloaded ${listings.length} properties. Transforming data...`);
 
             // 4. Data Transformation
             const supabasePayload = listings.map(listing => {
